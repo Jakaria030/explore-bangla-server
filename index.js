@@ -1,6 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const { connectDB } = require('./dbConfig/dbConfig');
+const userRoutes = require('./routes/userRoutes');
 
+
+// Load environment variables
+dotenv.config();
+
+
+// Connect to MongoDB
+connectDB();
 
 // Create express app
 const app = express();
@@ -9,6 +19,10 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
+
+// Routes
+app.use(userRoutes);
 
 
 // Base route message
