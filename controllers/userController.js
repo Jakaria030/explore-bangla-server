@@ -8,3 +8,13 @@ exports.postUser = async (req, res) => {
 
     res.send(result);
 };
+
+exports.isExistUser = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const email = req.query.email;
+    const query = {email: email};
+    const result = await userCollections.countDocuments(query);
+
+    res.send({count: result});
+};
