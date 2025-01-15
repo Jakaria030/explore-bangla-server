@@ -8,6 +8,14 @@ exports.postJWT = async (req, res) => {
     res.send({ token });
 };
 
+exports.getUser = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const result = await userCollections.find().toArray();
+
+    res.send(result);
+};
+
 exports.postUser = async (req, res) => {
     const { userCollections } = getCollections();
 
