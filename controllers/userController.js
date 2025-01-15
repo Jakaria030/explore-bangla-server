@@ -26,3 +26,17 @@ exports.isExistUser = async (req, res) => {
 
     res.send({ count: result });
 };
+
+exports.userRole = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const email = req.query.email;
+    const query = {email: email};
+    const options = {
+        projection: {role: 1, _id: 0}
+    };
+
+    const result = await userCollections.findOne(query, options);
+
+    res.send(result);
+}
