@@ -30,8 +30,9 @@ const getCollections = () => {
     }
 
     const userCollections = db.collection('users');
+    const packageCollections = db.collection('packages');
 
-    return { userCollections };
+    return { userCollections, packageCollections };
 };
 
 module.exports = { connectDB, getCollections };
