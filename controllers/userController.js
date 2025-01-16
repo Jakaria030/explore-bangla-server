@@ -1,9 +1,9 @@
 const { getCollections } = require("../dbConfig/dbConfig");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 exports.postJWT = async (req, res) => {
     const user = req.body;
-    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
 
     res.send({ token });
 };
@@ -83,8 +83,28 @@ exports.isAdmin = async (req, res) => {
       
       let admin = false;
       if(user){
-        admin = user?.role === 'admin';
+        admin = user?.role === "admin";
       }
 
       res.send({admin}); 
+}
+
+exports.isTourGuide = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const email = req.params.email;
+      
+      if(email !== req.user.email){
+        return res.status(403).send({message: "Access denied. Tour-guide only."});
+      }
+
+      const query = {email: email};
+      const user = await userCollections.findOne(query);
+
+      let tourGuide = false;
+      if(user){
+        tourGuide = user?.role === "tour-guide";
+      }
+
+      res.send({tourGuide}); 
 }
