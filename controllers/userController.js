@@ -68,3 +68,23 @@ exports.userRole = async (req, res) => {
 
     res.send(result);
 }
+
+exports.isAdmin = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const email = req.params.email;
+      
+      if(email !== req.user.email){
+        return res.status(403).send({message: "Access denied. Admins only."});
+      }
+
+      const query = {email: email};
+      const user = await userCollections.findOne(query);
+      
+      let admin = false;
+      if(user){
+        admin = user?.role === 'admin';
+      }
+
+      res.send({admin}); 
+}
