@@ -67,7 +67,7 @@ exports.userRole = async (req, res) => {
     const result = await userCollections.findOne(query, options);
 
     res.send(result);
-}
+};
 
 exports.isAdmin = async (req, res) => {
     const {userCollections} = getCollections();
@@ -87,7 +87,7 @@ exports.isAdmin = async (req, res) => {
       }
 
       res.send({admin}); 
-}
+};
 
 exports.isTourGuide = async (req, res) => {
     const {userCollections} = getCollections();
@@ -107,7 +107,7 @@ exports.isTourGuide = async (req, res) => {
       }
 
       res.send({tourGuide}); 
-}
+};
 
 exports.isTourist = async (req, res) => {
     const {userCollections} = getCollections();
@@ -127,4 +127,19 @@ exports.isTourist = async (req, res) => {
       }
 
       res.send({tourist}); 
-}
+};
+
+exports.updateUser = async (req, res) => {
+  const {userCollections} = getCollections();
+
+  const email = req.query.email;
+  const updatedUser = req.body;
+
+  const updateDoc = {
+    $set: updatedUser
+  };
+
+  const result = await userCollections.updateOne({email: email}, updateDoc);
+
+  res.send(result);
+};
