@@ -108,3 +108,23 @@ exports.isTourGuide = async (req, res) => {
 
       res.send({tourGuide}); 
 }
+
+exports.isTourist = async (req, res) => {
+    const {userCollections} = getCollections();
+
+    const email = req.params.email;
+      
+      if(email !== req.user.email){
+        return res.status(403).send({message: "Access denied. Tourist only."});
+      }
+
+      const query = {email: email};
+      const user = await userCollections.findOne(query);
+
+      let tourist = false;
+      if(user){
+        tourist = user?.role === "tourist";
+      }
+
+      res.send({tourist}); 
+}
