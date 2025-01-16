@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { getCollections } = require("../dbConfig/dbConfig")
 
 exports.postPackages = async (req, res) => {
@@ -30,6 +31,16 @@ exports.randomPackages = async (req, res) => {
     };
 
     const result = await packageCollections.aggregate([random, projection]).toArray();
+
+    res.send(result);
+};
+
+exports.singlePackage = async (req, res) => {
+    const {packageCollections} = getCollections();
+
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await packageCollections.findOne(query);
 
     res.send(result);
 };
