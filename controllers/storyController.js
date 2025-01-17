@@ -41,3 +41,17 @@ exports.deleteStory = async (req, res) => {
 
     res.send(result);
 }
+
+exports.getSingleStory = async(req, res) => {
+    const {storyCollections} = getCollections();
+
+    if(req.user.email !== req.query.email){
+        return res.status(403).json({message: "Access denied."});
+    }
+
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+    const result = await storyCollections.findOne(query)
+
+    res.send(result);
+};
