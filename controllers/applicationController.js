@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { getCollections } = require("../dbConfig/dbConfig");
 
 exports.postApplication = async (req, res) => {
@@ -57,6 +58,21 @@ exports.getApplications = async (req, res) => {
             $limit: limit
         }
     ]).toArray();
+
+    res.send(result);
+};
+
+exports.deleteApplication = async (req, res) => {
+    const {applicationCollections} = getCollections();
+
+    if(req.user.email !== req.query.email){
+        return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const id = req.params.id;
+    const query = {_id: new ObjectId(id)};
+
+    const result = await applicationCollections.deleteOne(query);
 
     res.send(result);
 };
