@@ -55,3 +55,22 @@ exports.getSingleStory = async(req, res) => {
 
     res.send(result);
 };
+
+exports.deleteSingleImage = async (req, res) => {
+    const {storyCollections} = getCollections();
+
+    if(req.user.email !== req.query.email){
+        return res.status(403).json({message: "Access denied."});
+    }
+
+    const {storyID, imageURL} = req.body;
+    const query = {_id: new ObjectId(storyID)};
+
+    const updatedDoc = {
+        $pull: {images: imageURL}
+    };
+
+    const result = await storyCollections.updateOne(query, updatedDoc);
+
+    res.send(result);
+};
