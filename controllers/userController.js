@@ -132,6 +132,10 @@ exports.isTourist = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const {userCollections} = getCollections();
 
+  if(req.user.email !== req.query.email){
+    return res.status(403).json({message: 'Access denied.'});
+  }
+
   const email = req.query.email;
   const updatedUser = req.body;
 
@@ -141,5 +145,24 @@ exports.updateUser = async (req, res) => {
 
   const result = await userCollections.updateOne({email: email}, updateDoc);
 
+  res.send(result);
+};
+
+exports.updateUserRole = async (req, res) => {
+  const {userCollections} = getCollections();
+
+  if(req.user.email !== req.query.email){
+    return res.status(403).json({message: "Access denied. Admins only."});
+  }
+
+  const email = req.params.email;
+  const query = {email: email};
+  const updatedDoc = {
+    $set: {
+      "role": "tour-guide"
+    }
+  };
+
+  const result = await userCollections.updateOne(query, updatedDoc);
   res.send(result);
 };
