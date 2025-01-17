@@ -5,6 +5,7 @@ const { connectDB } = require('./dbConfig/dbConfig');
 const userRoutes = require('./routes/userRoutes');
 const packageRoutes = require('./routes/packageRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const storyRoutes = require('./routes/storyRoutes');
 
 
 // Load environment variables
@@ -27,6 +28,7 @@ app.use(cors());
 app.use(userRoutes);
 app.use(packageRoutes);
 app.use(applicationRoutes);
+app.use(storyRoutes)
 
 
 // Base route message
