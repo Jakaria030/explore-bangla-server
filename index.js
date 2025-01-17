@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const { connectDB } = require('./dbConfig/dbConfig');
 const userRoutes = require('./routes/userRoutes');
 const packageRoutes = require('./routes/packageRoutes');
+const applicationRoutes = require('./routes/applicationRoutes');
 
 
 // Load environment variables
@@ -25,6 +26,7 @@ app.use(cors());
 // Routes
 app.use(userRoutes);
 app.use(packageRoutes);
+app.use(applicationRoutes);
 
 
 // Base route message
