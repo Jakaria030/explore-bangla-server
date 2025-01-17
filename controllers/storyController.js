@@ -12,3 +12,16 @@ exports.postStory = async (req, res) => {
     
     res.send(result);
 };
+
+exports.getStories = async (req, res) => {
+    const {storyCollections} = getCollections();
+
+    if(req.user.email !== req.query.email){
+        return res.status(403).json({message: "Access denied."});
+    }
+
+    const query = {authEmail: req.query.email};
+    const result = await storyCollections.find(query).toArray();
+
+    res.send(result);
+};
