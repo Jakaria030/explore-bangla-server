@@ -75,6 +75,25 @@ exports.deleteSingleImage = async (req, res) => {
     res.send(result);
 };
 
+exports.uploadSingleImage = async (req, res) => {
+    const {storyCollections} = getCollections();
+
+    if(req.user.email !== req.query.email){
+        return res.status(403).json({message: "Access denied."});
+    }
+
+    const {id, image} = req.body;
+    const query = {_id: new ObjectId(id)};
+
+    const updatedDoc = {
+        $push: {images: image}
+    };
+
+    const result = await storyCollections.updateOne(query, updatedDoc);
+
+    res.send(result);
+};
+
 exports.updateStory = async (req, res) => {
     const {storyCollections} = getCollections();
 
