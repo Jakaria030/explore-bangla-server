@@ -2,138 +2,138 @@ const { getCollections } = require("../dbConfig/dbConfig");
 const jwt = require("jsonwebtoken");
 
 exports.postJWT = async (req, res) => {
-    const user = req.body;
-    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
+  const user = req.body;
+  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1h" });
 
-    res.send({ token });
+  res.send({ token });
 };
 
 exports.getUser = async (req, res) => {
-    const { userCollections } = getCollections();
+  const { userCollections } = getCollections();
 
-    const search = req.query.search || "";
-    const filter = req.query.filter;
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
+  const search = req.query.search || "";
+  const filter = req.query.filter;
+  const page = parseInt(req.query.page);
+  const limit = parseInt(req.query.limit);
 
-    const skip = (page-1)*limit;
+  const skip = (page - 1) * limit;
 
-    const query = {};
+  const query = {};
 
-    if (search) {
-        query.$or = [
-            { name: { $regex: search, $options: "i" } }, 
-            { email: { $regex: search, $options: "i" } },
-        ];
-    }
+  if (search) {
+    query.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { email: { $regex: search, $options: "i" } },
+    ];
+  }
 
-    if (filter) {
-        query.role = filter;
-    }
+  if (filter) {
+    query.role = filter;
+  }
 
-    const result = await userCollections.find(query).skip(skip).limit(limit).toArray();
+  const result = await userCollections.find(query).skip(skip).limit(limit).toArray();
 
-    res.send(result);
+  res.send(result);
 };
 
 exports.postUser = async (req, res) => {
-    const { userCollections } = getCollections();
+  const { userCollections } = getCollections();
 
-    const newUser = req.body;
-    const result = await userCollections.insertOne(newUser);
+  const newUser = req.body;
+  const result = await userCollections.insertOne(newUser);
 
-    res.send(result);
+  res.send(result);
 };
 
 exports.isExistUser = async (req, res) => {
-    const { userCollections } = getCollections();
+  const { userCollections } = getCollections();
 
-    const email = req.query.email;
-    const query = { email: email };
-    const result = await userCollections.countDocuments(query);
+  const email = req.query.email;
+  const query = { email: email };
+  const result = await userCollections.countDocuments(query);
 
-    res.send({ count: result });
+  res.send({ count: result });
 };
 
 exports.userRole = async (req, res) => {
-    const { userCollections } = getCollections();
+  const { userCollections } = getCollections();
 
-    const email = req.query.email;
-    const query = { email: email };
-    const options = {
-        projection: { role: 1, _id: 0 }
-    };
+  const email = req.query.email;
+  const query = { email: email };
+  const options = {
+    projection: { role: 1, _id: 0 }
+  };
 
-    const result = await userCollections.findOne(query, options);
+  const result = await userCollections.findOne(query, options);
 
-    res.send(result);
+  res.send(result);
 };
 
 exports.isAdmin = async (req, res) => {
-    const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
-    const email = req.params.email;
-      
-      if(email !== req.user.email){
-        return res.status(403).send({message: "Access denied. Admins only."});
-      }
+  const email = req.params.email;
 
-      const query = {email: email};
-      const user = await userCollections.findOne(query);
-      
-      let admin = false;
-      if(user){
-        admin = user?.role === "admin";
-      }
+  if (email !== req.user.email) {
+    return res.status(403).send({ message: "Access denied. Admins only." });
+  }
 
-      res.send({admin}); 
+  const query = { email: email };
+  const user = await userCollections.findOne(query);
+
+  let admin = false;
+  if (user) {
+    admin = user?.role === "admin";
+  }
+
+  res.send({ admin });
 };
 
 exports.isTourGuide = async (req, res) => {
-    const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
-    const email = req.params.email;
-      
-      if(email !== req.user.email){
-        return res.status(403).send({message: "Access denied. Tour-guide only."});
-      }
+  const email = req.params.email;
 
-      const query = {email: email};
-      const user = await userCollections.findOne(query);
+  if (email !== req.user.email) {
+    return res.status(403).send({ message: "Access denied. Tour-guide only." });
+  }
 
-      let tourGuide = false;
-      if(user){
-        tourGuide = user?.role === "tour-guide";
-      }
+  const query = { email: email };
+  const user = await userCollections.findOne(query);
 
-      res.send({tourGuide}); 
+  let tourGuide = false;
+  if (user) {
+    tourGuide = user?.role === "tour-guide";
+  }
+
+  res.send({ tourGuide });
 };
 
 exports.isTourist = async (req, res) => {
-    const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
-    const email = req.params.email;
-      
-      if(email !== req.user.email){
-        return res.status(403).send({message: "Access denied. Tourist only."});
-      }
+  const email = req.params.email;
 
-      const query = {email: email};
-      const user = await userCollections.findOne(query);
+  if (email !== req.user.email) {
+    return res.status(403).send({ message: "Access denied. Tourist only." });
+  }
 
-      let tourist = false;
-      if(user){
-        tourist = user?.role === "tourist";
-      }
+  const query = { email: email };
+  const user = await userCollections.findOne(query);
 
-      res.send({tourist}); 
+  let tourist = false;
+  if (user) {
+    tourist = user?.role === "tourist";
+  }
+
+  res.send({ tourist });
 };
 
 exports.updateUser = async (req, res) => {
-  const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
-  if(req.user.email !== req.query.email){
-    return res.status(403).json({message: 'Access denied.'});
+  if (req.user.email !== req.query.email) {
+    return res.status(403).json({ message: 'Access denied.' });
   }
 
   const email = req.query.email;
@@ -143,20 +143,20 @@ exports.updateUser = async (req, res) => {
     $set: updatedUser
   };
 
-  const result = await userCollections.updateOne({email: email}, updateDoc);
+  const result = await userCollections.updateOne({ email: email }, updateDoc);
 
   res.send(result);
 };
 
 exports.updateUserRole = async (req, res) => {
-  const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
-  if(req.user.email !== req.query.email){
-    return res.status(403).json({message: "Access denied. Admins only."});
+  if (req.user.email !== req.query.email) {
+    return res.status(403).json({ message: "Access denied. Admins only." });
   }
 
   const email = req.params.email;
-  const query = {email: email};
+  const query = { email: email };
   const updatedDoc = {
     $set: {
       "role": "tour-guide"
@@ -164,5 +164,25 @@ exports.updateUserRole = async (req, res) => {
   };
 
   const result = await userCollections.updateOne(query, updatedDoc);
+  res.send(result);
+};
+
+exports.randomTourGuides = async (req, res) => {
+  const { userCollections } = getCollections();
+
+  const query = {
+    $match: {
+      role: "tour-guide" 
+    }
+  };
+
+  const random = {
+    $sample: {
+      size: 6
+    }
+  };
+
+  const result = await userCollections.aggregate([query, random]).toArray();
+
   res.send(result);
 };
