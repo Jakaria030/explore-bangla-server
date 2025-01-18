@@ -115,3 +115,26 @@ exports.updateStory = async (req, res) => {
 
     res.send(result);
 };
+
+exports.getFourStory = async (req, res) => {
+    const {storyCollections} = getCollections();
+
+    const random = {
+        $sample : {
+            size: 4
+        }
+    };
+
+    const projection = {
+        $project: {
+            _id: 1,
+            title: 1,
+            images: 1,
+            story: 1
+        }
+    };
+
+    const result = await storyCollections.aggregate([random, projection]).toArray();
+
+    res.send(result);
+};
