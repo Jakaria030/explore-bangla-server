@@ -148,3 +148,9 @@ exports.getTourGuideStory = async (req, res) => {
 
     res.send(result);
 };
+
+exports.getAllStory = async (req, res) => {
+    const {storyCollections} = getCollections();
+    const result = await storyCollections.find().toArray();
+    res.send(result);
+};

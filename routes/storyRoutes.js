@@ -1,6 +1,6 @@
 const express = require('express');
 const { verifyToken, verifyTourist, verifyTourGuide } = require('../middlewares/authMiddlewares');
-const { postStory, getStories, deleteStory, getSingleStory, deleteSingleImage, uploadSingleImage, updateStory, getFourStory, getTourGuideStory } = require('../controllers/storyController');
+const { postStory, getStories, deleteStory, getSingleStory, deleteSingleImage, uploadSingleImage, updateStory, getFourStory, getTourGuideStory, getAllStory } = require('../controllers/storyController');
 const router = express.Router();
 
 router.post('/stories/tourist-story', verifyToken, verifyTourist, postStory);
@@ -22,5 +22,6 @@ router.patch('/stories/tour-guide/update-story/:id', verifyToken, verifyTourGuid
 
 router.get('/stories/four-random-story', getFourStory);
 router.get('/stories/get-tour-guide-stories/:email', getTourGuideStory);
+router.get('/stories/get-all-story', getAllStory);
 
 module.exports = router;
