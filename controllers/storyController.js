@@ -138,3 +138,13 @@ exports.getFourStory = async (req, res) => {
 
     res.send(result);
 };
+
+exports.getTourGuideStory = async (req, res) => {
+    const {storyCollections} = getCollections();
+
+    const email = req.params.email;
+    const query = {authEmail: email};
+    const result = await storyCollections.find(query).toArray();
+
+    res.send(result);
+};

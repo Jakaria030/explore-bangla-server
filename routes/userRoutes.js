@@ -1,5 +1,5 @@
 const express = require('express');
-const { postUser, isExistUser, postJWT, userRole, getUser, isAdmin, isTourGuide, isTourist, updateUser, updateUserRole, randomTourGuides } = require("../controllers/userController");
+const { postUser, isExistUser, postJWT, userRole, getUser, isAdmin, isTourGuide, isTourist, updateUser, updateUserRole, randomTourGuides, getSingleUser } = require("../controllers/userController");
 const { verifyToken, verifyAdmin, verifyTourist, verifyTourGuide } = require('../middlewares/authMiddlewares');
 const router = express.Router();
 
@@ -8,6 +8,7 @@ router.post('/jwt', postJWT);
 router.post('/users', postUser);
 
 router.get('/users', verifyToken, verifyAdmin, getUser);
+router.get('/users/single-user/:id', getSingleUser);
 router.get('/users/exist', isExistUser);
 router.get('/users/role', userRole);
 

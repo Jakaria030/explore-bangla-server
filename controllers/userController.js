@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { getCollections } = require("../dbConfig/dbConfig");
 const jwt = require("jsonwebtoken");
 
@@ -186,3 +187,13 @@ exports.randomTourGuides = async (req, res) => {
 
   res.send(result);
 };
+
+exports.getSingleUser = async (req, res) => {
+  const {userCollections} = getCollections();
+
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)};
+  const result = await userCollections.findOne(query);
+
+  res.send(result);
+}
