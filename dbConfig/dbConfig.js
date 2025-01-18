@@ -33,8 +33,9 @@ const getCollections = () => {
     const packageCollections = db.collection('packages');
     const applicationCollections = db.collection('applications');
     const storyCollections = db.collection('stories');
+    const bookingCollections = db.collection('bookings');
 
-    return { userCollections, packageCollections, applicationCollections, storyCollections };
+    return { userCollections, packageCollections, applicationCollections, storyCollections, bookingCollections };
 };
 
 module.exports = { connectDB, getCollections };

@@ -6,6 +6,7 @@ const userRoutes = require('./routes/userRoutes');
 const packageRoutes = require('./routes/packageRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const storyRoutes = require('./routes/storyRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 
 // Load environment variables
@@ -28,7 +29,8 @@ app.use(cors());
 app.use(userRoutes);
 app.use(packageRoutes);
 app.use(applicationRoutes);
-app.use(storyRoutes)
+app.use(storyRoutes);
+app.use(bookingRoutes);
 
 
 // Base route message
