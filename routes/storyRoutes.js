@@ -12,5 +12,11 @@ router.patch('/stories/tourist/upload-image', verifyToken, verifyTourist, upload
 router.patch('/stories/tourist/update-story/:id', verifyToken, verifyTourist, updateStory);
 
 router.post('/stories/tour-guide-story', verifyToken, verifyTourGuide, postStory);
+router.get('/stories/tour-guide-stories', verifyToken, verifyTourGuide, getStories);
+router.delete('/stories/tour-guide-stories/:id', verifyToken, verifyTourGuide, deleteStory);
+router.get('/stories/tour-guide/:id', verifyToken, verifyTourGuide, getSingleStory);
+router.patch('/stories/tour-guide/delete-image', verifyToken, verifyTourGuide, deleteSingleImage);
+router.patch('/stories/tour-guide/upload-image', verifyToken, verifyTourGuide, uploadSingleImage);
+router.patch('/stories/tour-guide/update-story/:id', verifyToken, verifyTourGuide, updateStory);
 
 module.exports = router;
