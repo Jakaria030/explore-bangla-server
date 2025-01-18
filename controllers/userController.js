@@ -197,3 +197,9 @@ exports.getSingleUser = async (req, res) => {
 
   res.send(result);
 }
+
+exports.getAllTourGuide = async (req, res) => {
+  const {userCollections} = getCollections();
+  const result = await userCollections.find({role: 'tour-guide'}).toArray();
+  res.send(result);
+}
