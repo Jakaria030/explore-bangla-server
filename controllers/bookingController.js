@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const { getCollections } = require("../dbConfig/dbConfig")
 
 exports.postBooking = async (req, res) => {
@@ -78,3 +79,16 @@ exports.getBookingDetails = async (req, res) => {
 
     res.send(result);
 };
+
+exports.deleteBooking = async(req, res) => {
+    const {bookingCollections} = getCollections();
+
+    if (req.user.email !== req.query.email) {
+        return res.status(403).json({ message: "Access denied. Tourist only." });
+    }
+
+    const bookingID = req.query.bookingID;
+    const query = {_id: new ObjectId(bookingID)};
+    const result = await bookingCollections.deleteOne(query);
+    res.send(result);
+}
