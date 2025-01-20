@@ -173,7 +173,7 @@ exports.randomTourGuides = async (req, res) => {
 
   const query = {
     $match: {
-      role: "tour-guide" 
+      role: "tour-guide"
     }
   };
 
@@ -189,17 +189,54 @@ exports.randomTourGuides = async (req, res) => {
 };
 
 exports.getSingleUser = async (req, res) => {
-  const {userCollections} = getCollections();
+  const { userCollections } = getCollections();
 
   const id = req.params.id;
-  const query = {_id: new ObjectId(id)};
+  const query = { _id: new ObjectId(id) };
   const result = await userCollections.findOne(query);
 
   res.send(result);
-}
+};
 
 exports.getAllTourGuide = async (req, res) => {
-  const {userCollections} = getCollections();
-  const result = await userCollections.find({role: 'tour-guide'}).toArray();
+  const { userCollections } = getCollections();
+  const result = await userCollections.find({ role: 'tour-guide' }).toArray();
   res.send(result);
-}
+};
+
+exports.getStatistics = async (req, res) => {
+  const { userCollections, packageCollections, storyCollections } = getCollections();
+
+    const [userStats, packageStats, storyStats] = await Promise.all([
+      userCollections.aggregate([
+        {
+          $group: {
+            _id: "$role",
+            count: { $sum: 1 }
+          }
+        },
+        {
+          $project: {
+            role: "$_id",
+            count: 1,
+            _id: 0
+          }
+        }
+      ]).toArray(),
+      packageCollections.countDocuments(),
+      storyCollections.countDocuments()
+    ]);
+
+    const touristStat = userStats.find(stat => stat.role === "tourist") || { count: 0 };
+    const tourGuideStat = userStats.find(stat => stat.role === "tour-guide") || { count: 0 };
+
+    const result = {
+      totalTourist: touristStat.count,
+      totalTourGuide: tourGuideStat.count,
+      totalPackages: packageStats,
+      totalStory: storyStats
+    };
+
+    res.send(result);
+
+};
