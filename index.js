@@ -1,16 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { connectDB } = require('./dbConfig/dbConfig');
 const userRoutes = require('./routes/userRoutes');
 const packageRoutes = require('./routes/packageRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const storyRoutes = require('./routes/storyRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
-
-
-// Load environment variables
-dotenv.config();
 
 
 // Connect to MongoDB
@@ -32,6 +29,24 @@ app.use(applicationRoutes);
 app.use(storyRoutes);
 app.use(bookingRoutes);
 
+
+// payment intent
+app.post('/create-payment-intent', async (req, res) => {
+    
+    const { price } = req.body;
+    const amount = parseInt(price * 100);
+
+    const paymentInent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+    });
+
+    res.send({
+        clientSecret: paymentInent.client_secret
+    });
+    
+});
 
 // Base route message
 app.get('/', (req, res) => {

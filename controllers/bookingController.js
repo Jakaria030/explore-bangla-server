@@ -80,15 +80,15 @@ exports.getBookingDetails = async (req, res) => {
     res.send(result);
 };
 
-exports.deleteBooking = async(req, res) => {
-    const {bookingCollections} = getCollections();
+exports.deleteBooking = async (req, res) => {
+    const { bookingCollections } = getCollections();
 
     if (req.user.email !== req.query.email) {
         return res.status(403).json({ message: "Access denied. Tourist only." });
     }
 
     const bookingID = req.query.bookingID;
-    const query = {_id: new ObjectId(bookingID)};
+    const query = { _id: new ObjectId(bookingID) };
     const result = await bookingCollections.deleteOne(query);
     res.send(result);
 };
@@ -157,5 +157,38 @@ exports.getBookingDetailsForTourGuide = async (req, res) => {
         }
     ]).toArray();
 
+    res.send(result);
+};
+
+exports.getSingleBooking = async (req, res) => {
+    const { bookingCollections } = getCollections();
+
+    if (req.user.email !== req.query.email) {
+        return res.status(403).json({ message: "Access denied." });
+    }
+
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id) };
+
+    const result = await bookingCollections.findOne(query);
+    res.send(result);
+};
+
+exports.updateBooking = async (req, res) => {
+    const {bookingCollections} = getCollections();
+
+    const {transectionID, status} = req.body;
+    const booking_id = req.params.id;
+    const query = {_id: new ObjectId(booking_id)};
+    
+    const updatedDoc = {
+        $set:{
+            transectionID: transectionID,
+            status: status
+        }
+    };
+
+    const result = await bookingCollections.updateOne(query, updatedDoc);
+    
     res.send(result);
 };
