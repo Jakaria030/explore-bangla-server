@@ -257,3 +257,17 @@ exports.countAllForDashboard = async (req, res) => {
     res.send(result);
 
 };
+
+exports.getBookingCounts = async(req, res) => {
+    const {bookingCollections} = getCollections();
+
+    if (req.user.email !== req.query.email) {
+        return res.status(403).json({ message: "Access denied." });
+    }
+
+    const email = req.query.email;
+    const query = {touristEmail: email, transectionID: {$ne: ""}};
+    const result = await bookingCollections.countDocuments(query);
+    
+    res.send({bookingCounts: result});
+};

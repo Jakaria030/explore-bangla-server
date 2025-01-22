@@ -1,6 +1,6 @@
 const express = require('express');
 const { verifyToken, verifyTourist, verifyTourGuide, verifyAdmin } = require('../middlewares/authMiddlewares');
-const { postBooking, getBookingDetails, deleteBooking, getBookingDetailsForTourGuide, getSingleBooking, updateBooking, countAllForDashboard } = require('../controllers/bookingController');
+const { postBooking, getBookingDetails, deleteBooking, getBookingDetailsForTourGuide, getSingleBooking, updateBooking, countAllForDashboard, getBookingCounts,  } = require('../controllers/bookingController');
 const router = express.Router();
 
 router.post('/bookings', verifyToken, verifyTourist, postBooking);
@@ -11,5 +11,6 @@ router.get('/bookings/get-single-booking/:id', verifyToken, verifyTourist, getSi
 router.patch('/bookings/update-booking/:id', updateBooking);
 
 router.get('/dashboard/count-all', verifyToken, verifyAdmin, countAllForDashboard);
+router.get('/bookings/counts', verifyToken, verifyTourist, getBookingCounts);
 
 module.exports = router;
