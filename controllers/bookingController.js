@@ -175,20 +175,85 @@ exports.getSingleBooking = async (req, res) => {
 };
 
 exports.updateBooking = async (req, res) => {
-    const {bookingCollections} = getCollections();
+    const { bookingCollections } = getCollections();
 
-    const {transectionID, status} = req.body;
+    const { transectionID, status } = req.body;
     const booking_id = req.params.id;
-    const query = {_id: new ObjectId(booking_id)};
-    
-    const updatedDoc = {
-        $set:{
-            transectionID: transectionID,
-            status: status
-        }
-    };
+    const query = { _id: new ObjectId(booking_id) };
+
+    const updatedDoc = { $set: {} };
+
+    if (transectionID) {
+        updatedDoc.$set.transectionID = transectionID;
+    }
+
+    if (status) {
+        updatedDoc.$set.status = status;
+    }
 
     const result = await bookingCollections.updateOne(query, updatedDoc);
-    
+
     res.send(result);
+};
+
+exports.countAllForDashboard = async (req, res) => {
+
+    // Destructure collections from getCollections
+    const { bookingCollections, userCollections, storyCollections, packageCollections } = getCollections();
+
+    // Define the aggregation queries
+    const totalPaymentPromise = bookingCollections
+        .aggregate([
+            { $match: { transectionID: { $exists: true, $ne: null } } },
+            { $group: { _id: null, totalPayment: { $sum: "$price" } } },
+        ])
+        .toArray();
+
+    const totalTourGuidesPromise = userCollections
+        .aggregate([
+            { $match: { role: "tour-guide" } },
+            { $count: "totalTourGuides" },
+        ])
+        .toArray();
+
+    const totalPackagesPromise = packageCollections
+        .aggregate([
+            { $count: "totalPackages" },
+        ])
+        .toArray();
+
+    const totalClientsPromise = userCollections
+        .aggregate([
+            { $match: { role: "tourist" } },
+            { $count: "totalClients" },
+        ])
+        .toArray();
+
+    const totalStoriesPromise = storyCollections
+        .aggregate([
+            { $count: "totalStories" },
+        ])
+        .toArray();
+
+    // Run all promises concurrently
+    const [totalPayment, totalTourGuides, totalPackages, totalClients, totalStories] = await Promise.all([
+        totalPaymentPromise,
+        totalTourGuidesPromise,
+        totalPackagesPromise,
+        totalClientsPromise,
+        totalStoriesPromise,
+    ]);
+
+    // Combine results into a single response object
+    const result = {
+        totalPayment: totalPayment.length > 0 ? totalPayment[0].totalPayment : 0,
+        totalTourGuides: totalTourGuides.length > 0 ? totalTourGuides[0].totalTourGuides : 0,
+        totalPackages: totalPackages.length > 0 ? totalPackages[0].totalPackages : 0,
+        totalClients: totalClients.length > 0 ? totalClients[0].totalClients : 0,
+        totalStories: totalStories.length > 0 ? totalStories[0].totalStories : 0,
+    };
+
+    // Send the response back to the client
+    res.send(result);
+
 };
